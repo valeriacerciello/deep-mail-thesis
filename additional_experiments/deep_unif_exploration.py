@@ -135,18 +135,41 @@ class DeepUniform:
                         action_p2,
                         next_state,
                     )
-                    
+
                 state = next_state
-                
+
+                # Stop only the current trajectory when the expert reaches its goal
+                if player2_pos in self.grid_game.reward_coordinates:
+                    logger.info(
+                        f"Player 1 exploration, trajectory {k+1}: "
+                        f"Expert Player 2 reached goal at {player2_pos}. "
+                        f"Terminating current trajectory."
+                    )
+                    break
+
             # End the trajectory in the trajectory buffer
             self.trajectory_buffer_p1.end_trajectory()
 
-            if player2_pos in self.grid_game.reward_coordinates:
-                break 
+
+
+            #     state = next_state
+                
+            # # End the trajectory in the trajectory buffer
+            # self.trajectory_buffer_p1.end_trajectory()
+
+            # if player2_pos in self.grid_game.reward_coordinates:
+            #     break 
 
             if max_transitions is not None and self.trajectory_buffer_p1.num_transitions() >= max_transitions:
                 logger.info(f"Max transitions reached for Player 1: {self.trajectory_buffer_p1.num_transitions()} >= {max_transitions}")
                 break
+
+
+        logger.info(
+            f"Player 1 exploration completed: "
+            f"{self.trajectory_buffer_p1.num_trajectories()} trajectories, "
+            f"{self.trajectory_buffer_p1.num_transitions()} transitions"
+        )
         
         # run exploration for the second player
         logger.info("="*80)
@@ -195,17 +218,39 @@ class DeepUniform:
                         action_p1,  # Expert action is from p1
                         next_state,
                     )
+
                 state = next_state
-                
+
+                # Stop only the current trajectory when the expert reaches its goal
+                if player1_pos in self.grid_game.reward_coordinates:
+                    logger.info(
+                        f"Player 2 exploration, trajectory {k+1}: "
+                        f"Expert Player 1 reached goal at {player1_pos}. "
+                        f"Terminating current trajectory."
+                    )
+                    break
+
             # End the trajectory in the trajectory buffer
             self.trajectory_buffer_p2.end_trajectory()
 
-            if player1_pos in self.grid_game.reward_coordinates:
-                break
+
+            #     state = next_state
+                
+            # # End the trajectory in the trajectory buffer
+            # self.trajectory_buffer_p2.end_trajectory()
+
+            # if player1_pos in self.grid_game.reward_coordinates:
+            #     break
 
             if max_transitions is not None and self.trajectory_buffer_p2.num_transitions() >= max_transitions:
                 logger.info(f"Max transitions reached for Player 2: {self.trajectory_buffer_p2.num_transitions()} >= {max_transitions}")
                 break
+
+        logger.info(
+            f"Player 2 exploration completed: "
+            f"{self.trajectory_buffer_p2.num_trajectories()} trajectories, "
+            f"{self.trajectory_buffer_p2.num_transitions()} transitions"
+        )
         
         # extract data from replay buffer to train behavioral cloning for player 2
         logger.info("="*80)
