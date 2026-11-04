@@ -603,6 +603,8 @@ class DeepWARMMAIL:
                     )
                     
                     state = next_state
+                    if player2_pos in self.grid_game.reward_coordinates:
+                        break
                 
                 # End the trajectory in the trajectory buffer
                 self.trajectory_buffer_p1.end_trajectory()
@@ -610,9 +612,6 @@ class DeepWARMMAIL:
                 # update DQN for player 1 by training on the whole replay buffer
                 self.dqn_p1.train_on_replay_buffer(self.replay_buffer_p1, self.dqn_target_p1, epochs=gradient_steps, batch_size=self.batch_size, device=self.device)
                 
-                # break after reward is reached
-                if player2_pos in self.grid_game.reward_coordinates:
-                    break
                 # update lambda matrix
                 if new_trajectory_features:
                     phi_batch = torch.cat(new_trajectory_features, dim=0)
@@ -779,15 +778,21 @@ class DeepWARMMAIL:
                     )
                     
                     state = next_state
+                    if player1_pos in self.grid_game.reward_coordinates:
+                        break
                 
                 # End the trajectory in the trajectory buffer
                 self.trajectory_buffer_p2.end_trajectory()
                 
                 # Update DQN for player 2
-                self.dqn_p2.train_on_replay_buffer(self.replay_buffer_p2, self.dqn_target_p2, epochs=epochs, batch_size=self.batch_size, device=self.device)
+                self.dqn_p2.train_on_replay_buffer(
+                    self.replay_buffer_p2,
+                    self.dqn_target_p2,
+                    epochs=gradient_steps,
+                    batch_size=self.batch_size,
+                    device=self.device
+                )
                 
-                if player1_pos in self.grid_game.reward_coordinates:
-                    break
                 
                 # Update lambda matrix with features from the new trajectory
                 if new_trajectory_features:
