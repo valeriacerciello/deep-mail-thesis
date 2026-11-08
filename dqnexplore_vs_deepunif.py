@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from environments.grid_world import GridZeroSum, convert_gridzero_to_markov_game
 from environments.player import Player
 from game_solver import MarkovGameValueIteration
@@ -28,9 +28,9 @@ from additional_experiments.utils import format_time
 from additional_experiments.deep_unif_exploration import DeepUniform
 from additional_experiments.utils import calc_exploitability_true_both
 
-# find cuda devices
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "3,4"  # specify which GPUs to use
+# # find cuda devices
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3,4"  # specify which GPUs to use
 
 def get_or_compute_expert_policies(num_states, num_a1, num_a2, rewards, transitions, gamma, logger):
     """
@@ -49,7 +49,7 @@ def get_or_compute_expert_policies(num_states, num_a1, num_a2, rewards, transiti
         tuple: (mu_E_vi, nu_E_vi) - Expert policies for both players
     """
     # Create directory if it doesn't exist
-    policy_dir = Path(__file__).parent.parent / 'grid_expert_policies'
+    policy_dir = Path(__file__).resolve().parent / 'grid_expert_policies'
     policy_dir.mkdir(exist_ok=True)
     
     # Create a unique filename based on game parameters
@@ -89,7 +89,7 @@ def get_or_compute_expert_policies(num_states, num_a1, num_a2, rewards, transiti
 
 def setup_experiment_logging(log_file='DQN-Explore-BC_vs_deepunif.log'):
     """Set up logging for the comparison experiment."""
-    log_dir = Path(__file__).parent.parent / 'logs'
+    log_dir = Path(__file__).resolve().parent / 'logs'
     log_dir.mkdir(exist_ok=True)
     
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -372,6 +372,13 @@ def run_experiment():
                     results['deep_mail_time'].append(mail_time / len(DATASET_SIZES))  # Amortize time
                     results['deep_uniform_exploitability'].append(exploitability_unif)
                     results['deep_uniform_time'].append(uniform_time / len(DATASET_SIZES))  # Amortize time
+
+                    # Save intermediate results after each evaluation
+                    checkpoint_dir = Path(__file__).resolve().parent / 'results_all_algos'
+                    checkpoint_dir.mkdir(exist_ok=True)
+
+                    checkpoint_path = checkpoint_dir / f'DQN-Explore-BC_vs_deepunif_{timestamp}_partial.csv'
+                    pd.DataFrame(results).to_csv(checkpoint_path, index=False)
                     
 
                     logger.info(f"  Dataset size: {dataset_size}")
@@ -384,7 +391,7 @@ def run_experiment():
     # =========================================================================
     # Save Results
     # =========================================================================
-    results_dir = Path(__file__).parent.parent / 'results_all_algos'
+    results_dir = Path(__file__).resolve().parent / 'results_all_algos'
     results_dir.mkdir(exist_ok=True)
     
     # Save CSV

@@ -40,7 +40,7 @@ BETA_VALUES = [0.1]
 TEMPERATURE_VALUES = [1.0]
 IMAGE_SIZE = 32
 DQN_HIDDEN_DIM = 128
-DEVICE = torch.device('cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def seed_everything(seed):

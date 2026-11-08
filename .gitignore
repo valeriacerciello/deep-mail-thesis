@@ -1,0 +1,17 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Experiment outputs
+logs/
+results_all_algos/
+
+# Cached expert policies
+grid_expert_policies/
+
+# Generated exploration trajectory buffers
+data/trajectories/
