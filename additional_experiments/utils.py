@@ -347,7 +347,7 @@ def calc_exploitability_true_both( mu_pi: np.ndarray, nu_pi: np.ndarray, reward:
         P_nu = (transition * mu_pi[:, :, None, None]).sum(axis=1)  # (S, A2, S')
         V_br_nu = value_iteration(R_nu, P_nu, initial_dist=initial_dist, gamma=gamma)
 
-        return float(max(V_br_mu - V_joint, V_br_nu - V_joint))
+        return float(max(V_br_mu - V_joint, V_br_nu + V_joint))
 
 def calc_exploitability_true_mu( mu_pi: np.ndarray, nu_pi: np.ndarray, reward: np.ndarray, transition: np.ndarray, initial_dist: np.ndarray, gamma: float) -> float:
         """

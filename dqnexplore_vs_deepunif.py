@@ -182,7 +182,8 @@ def run_experiment():
     # Testing parameters
     # ========================================================================
     H = 16  # Horizon
-    K = 500  # Maximum number of trajectories to collect for unif, outer loop iterations for MAIL
+    K = 500          # DQN-Explore-BC outer iterations
+    K_UNIFORM = 1000  # Deep Uniform exploration trajectories per player
     DATASET_SIZES = [1, 50, 100, 500, 1000]  # Dataset sizes to test
     BC_EPOCHS = 1000
     SEEDS = [42, 123, 456]  # Random seeds for reproducibility
@@ -300,13 +301,13 @@ def run_experiment():
                     unif_not_done_for_seed = False
                     # Run Deep Uniform once with K=500, training BC on multiple dataset sizes
                     logger.info(f"\n{'='*40}")
-                    logger.info(f"Running Deep Uniform with K={K}, Seed={seed}")
+                    logger.info(f"Running Deep Uniform with K={K_UNIFORM}, Seed={seed}")
                     logger.info(f"{'='*40}")
                     
                     uniform_start_time = time.time()
                     
                     deep_uniform_solver = DeepUniform(
-                        K=K,
+                        K=K_UNIFORM,
                         num_states=NUM_STATES,
                         num_actions_p1=NUM_A1,
                         num_actions_p2=NUM_A2,
